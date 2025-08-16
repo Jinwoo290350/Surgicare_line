@@ -189,17 +189,19 @@ class LineBot:
             return False
     
     def get_message_content(self, message_id):
-        url = f"{LINE_API_URL}/message/{message_id}/content"
+    # เปลี่ยน URL ให้ถูกต้องตาม LINE Data API
+        url = f"https://api-data.line.me/v2/bot/message/{message_id}/content"
         try:
             response = requests.get(url, headers=self.headers)
             if response.status_code == 200:
                 logger.info(f"📸 Image downloaded: {len(response.content)} bytes")
                 return response.content
             else:
-                logger.error(f"Image download failed: {response.status_code}")
+                # เพิ่มการบันทึกข้อผิดพลาดแบบละเอียด
+                logger.error(f"LINE API Error: {response.status_code} - {response.text}")
                 return None
         except Exception as e:
-            logger.error(f"Image download error: {e}")
+            logger.exception("Exception in image download:")  # บันทึก stack trace
             return None
 
 # Initialize LINE Bot
